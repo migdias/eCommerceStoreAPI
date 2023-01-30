@@ -11,6 +11,8 @@ Once you do the migrations (`db-migrate up`),  you will have three tables with s
 - `npm run build`
 - `node build/server.js`  
 
+The server will then start running on `http://localhost:3000`
+
 And in order to do pretty much anything you need to get authenticated. You may start by authenticate yourself as 'Harry Potter'. 
 
 Visit: `GET /users/:id/authenticate?id=1&password=myscariscool123`
