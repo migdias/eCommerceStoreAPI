@@ -4,6 +4,8 @@ This project is comprised of a mock-up of a e-commerce api. You may login/authen
 
 ## Getting Started
 
+Start up docker with the .env file. Since it is running locally on your machine, I provided the .env file to help setup everything.
+
 Once you do the migrations (`db-migrate up`), you will have three tables with some information already ready -- Users, orders and products -- and in order to do pretty much anything you need to get authenticated. You may start by authenticate yourself as 'Harry Potter'. 
 
 Visit: `GET /users/:id/authenticate?id=1&password=myscariscool123`
