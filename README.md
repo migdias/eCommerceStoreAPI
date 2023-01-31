@@ -45,53 +45,6 @@ Visit: `GET /users/:id/authenticate?id=1&password=myscariscool123`
 
 Please save the token and add it to your authorization header. From here you can create your own user, add products, create orders and much more. 
 
+Check the REQUIREMENTS.md for info on the routes and table schema.
+
 Have fun!
-
-## Summary of Routes
-
-### Users
-- [Token Required] `GET /users` -> Get the list of all users
-- [Token Required] `GET /users/:id` -> Get own user
-- [Token Required] `POST /users/?first_name={fn}&last_name={ln}&password={pwd}` -> Create a user
-- [Token Required] `PUT /users/:id?first_name={fn}&last_name={ln}&password={pwd}` -> Update own user information
-- [Token Required] `DELETE /users/:id?id={id}` -> Delete a user
-- `GET /users/:id/authenticate?id={user_id}&password={pwd}` -> Authenticate and get JWT token
-
-### Products
-- `GET /products` -> Gets all existing products
-- `GET /products/:id?id={id}` -> Get one specific product by id
-- [Token Required] `POST /products?name={name}&price={price}&category={category}` -> Creates a product
-- [Token Required] `PUT /products/:id?id={id}&name={name}&price={price}&category={category}` -> Updates product information (needs all columns except id)
-- [Token Required] `DELETE /products/:id?id={id}` -> Deletes a product from the database
-
-### Orders
-- [Token Required] `GET /orders/` -> Gets all orders related to your user (active and complete)
-- [Token Required] `GET /orders/currentOrders` -> Gets the current active orders for your user
-- [Token Required] `GET /orders/completedOrders` -> Gets the completed orders for your user
-- [Token Required] `POST /orders/product/?product_id={id}&quantity={quantity}` -> Creates an order of the `product_id` with the `quantity` (Associated with your user)
-- [Token Required] `DELETE /orders/:id?id=1` -> Deletes an order with a specific id (only if your user created that order)
-
-## Database and Tables
-
-Database: 
-- full_stack_dev
-
-Tables:
-- Users
-    - **id** -> SERIAL PRIMARY KEY,
-    - **first_name** -> VARCHAR(30),
-    - **last_name** -> VARCHAR(30),
-    - **password** -> VARCHAR(300)
-
-- products
-    - **id** -> SERIAL PRIMARY KEY,
-    - **name** -> VARCHAR(150),
-    - **price** -> FLOAT NOT NULL,
-    - **category** -> VARCHAR(50)
-
-- orders
-    - **id** -> SERIAL PRIMARY KEY,
-    - **product_id** -> INTEGER REFERENCES products(id),
-    - **quantity** -> INTEGER,
-    - **user_id** -> INTEGER REFERENCES users(id),
-    - **status** -> VARCHAR(15)
