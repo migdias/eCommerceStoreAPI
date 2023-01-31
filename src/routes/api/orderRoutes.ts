@@ -8,7 +8,11 @@ const orderRoutes = express.Router()
 orderRoutes.get('/', (async (req: Request, res: Response) => {
   // _ Token Validation Required
   const userID = validateToken(req, res)
-
+  if (userID === -1) {
+    res.status(401)
+    res.send('Access denied, invalid token.')
+    return
+  }
   try {
     const store = new OrderTable()
     const result = await store.index(userID)
@@ -23,7 +27,11 @@ orderRoutes.get('/', (async (req: Request, res: Response) => {
 orderRoutes.get('/currentOrders', (async (req: Request, res: Response) => {
   // _ Token Validation Required
   const userID = validateToken(req, res)
-
+  if (userID === -1) {
+    res.status(401)
+    res.send('Access denied, invalid token.')
+    return
+  }
   try {
     const store = new OrderTable()
     const result = await store.currentOrder(userID)
@@ -38,7 +46,11 @@ orderRoutes.get('/currentOrders', (async (req: Request, res: Response) => {
 orderRoutes.get('/completedOrders', (async (req: Request, res: Response) => {
   // _ Token Validation Required
   const userID = validateToken(req, res)
-
+  if (userID === -1) {
+    res.status(401)
+    res.send('Access denied, invalid token.')
+    return
+  }
   try {
     const store = new OrderTable()
     const result = await store.completedOrders(userID)
@@ -53,7 +65,11 @@ orderRoutes.get('/completedOrders', (async (req: Request, res: Response) => {
 orderRoutes.post('/product', (async (req: Request, res: Response): Promise<void> => {
   // _ Token Validation Required
   const userID = validateToken(req, res)
-
+  if (userID === -1) {
+    res.status(401)
+    res.send('Access denied, invalid token.')
+    return
+  }
   try {
     const o = {
       product_id: Number(req.query.product_id),
@@ -75,7 +91,11 @@ orderRoutes.post('/product', (async (req: Request, res: Response): Promise<void>
 orderRoutes.delete('/:id', (async (req: Request, res: Response) => {
   // _ Token Validation Required
   const userID = validateToken(req, res)
-
+  if (userID === -1) {
+    res.status(401)
+    res.send('Access denied, invalid token.')
+    return
+  }
   try {
     const orderID = Number(req.query.id)
     const store = new OrderTable()

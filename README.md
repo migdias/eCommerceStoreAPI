@@ -18,6 +18,8 @@ POSTGRES_TEST_DB=test
 BCRYPT_PASSWORD=speak-friend-and-enter
 SALT_ROUNDS=10
 TOKEN_SECRET=alohomora123!
+TEST_TABLE_USER_ID=1
+TEST_TABLE_USER_PASSWORD=myscariscool123
 ````
 
 Start up docker with the .env file. Since it is running locally on your machine. 
@@ -26,6 +28,8 @@ Start up docker with the .env file. Since it is running locally on your machine.
 Run `docker compose up` to create the postgres database. The server is setup to connect automatically to the postgres database but if you would like to connect by yourself you can go to the docker container that you setup, terminal and run `su postgres` -> `psql -U full_stack_user full_stack_dev` and you should be connected to the database.
 
 Once you do the migrations (`db-migrate up`),  you will have three tables with some information already ready -- Users, orders and products. If you do \dt in docker you should be able to see the tables. Try `SELECT * FROM products;`
+
+*Before building*: You can try running the tests to see if everything is ok. Run `npm run test`. Notice that this will run two separate jasmines. One for the routes and one for the models.
 
 Start up the server by running:
 
@@ -45,26 +49,26 @@ Have fun!
 ## Summary of Routes
 
 ### Users
-- `GET /users` -> Get the list of all users
-- `GET /users/:id` -> Get own user
-- `POST /users/?first_name={fn}&last_name={ln}&password={pwd}` -> Create a user
-- `PUT /users/:id` -> Update own user information
-- `DELETE /users/:id` -> Delete a user
+- [Token Required] `GET /users` -> Get the list of all users
+- [Token Required] `GET /users/:id` -> Get own user
+- [Token Required] `POST /users/?first_name={fn}&last_name={ln}&password={pwd}` -> Create a user
+- [Token Required] `PUT /users/:id?first_name={fn}&last_name={ln}&password={pwd}` -> Update own user information
+- [Token Required] `DELETE /users/:id?id={id}` -> Delete a user
 - `GET /users/:id/authenticate?id={user_id}&password={pwd}` -> Authenticate and get JWT token
 
 ### Products
 - `GET /products` -> Gets all existing products
 - `GET /products/:id?id={id}` -> Get one specific product by id
-- `POST /products` -> Creates a product
-- `PUT /products/:id?id={id}` -> Updates product information (needs all columns except id)
-- `DELETE /products/:id?id={id}` -> Deletes a product from the database
+- [Token Required] `POST /products?name={name}&price={price}&category={category}` -> Creates a product
+- [Token Required] `PUT /products/:id?id={id}&name={name}&price={price}&category={category}` -> Updates product information (needs all columns except id)
+- [Token Required] `DELETE /products/:id?id={id}` -> Deletes a product from the database
 
 ### Orders
-- `GET /orders/` -> Gets all orders related to your user (active and complete)
-- `GET /orders/currentOrders` -> Gets the current active orders for your user
-- `GET /orders/completedOrders` -> Gets the completed orders for your user
-- `POST /orders/product/?product_id={id}&quantity={quantity}` -> Creates an order of the `product_id` with the `quantity` (Associated with your user)
-- `DELETE /orders/:id?id=1` -> Deletes an order with a specific id (only if your user created that order)
+- [Token Required] `GET /orders/` -> Gets all orders related to your user (active and complete)
+- [Token Required] `GET /orders/currentOrders` -> Gets the current active orders for your user
+- [Token Required] `GET /orders/completedOrders` -> Gets the completed orders for your user
+- [Token Required] `POST /orders/product/?product_id={id}&quantity={quantity}` -> Creates an order of the `product_id` with the `quantity` (Associated with your user)
+- [Token Required] `DELETE /orders/:id?id=1` -> Deletes an order with a specific id (only if your user created that order)
 
 ## Database and Tables
 

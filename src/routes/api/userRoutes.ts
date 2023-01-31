@@ -142,14 +142,18 @@ userRoutes.get('/:id/authenticate', (async (req: Request, res: Response) => {
     const store = new UserTable()
     const authenticatedUser = await store.authenticate(id, password)
 
-    const token = jwt.sign({ user: authenticatedUser }, String(process.env.TOKEN_SECRET))
+    if (authenticatedUser === null) {
+      throw new Error('Authentication failed')
+    } else {
+      const token = jwt.sign({ user: authenticatedUser }, String(process.env.TOKEN_SECRET))
 
-    res.json({
-      response: 'Authentication successful',
-      jwt_token: token
-    })
+      res.json({
+        response: 'Authentication successful',
+        jwt_token: token
+      })
+    }
   } catch (err) {
-    res.status(400)
+    res.status(401)
     res.send(String(err))
   }
 }) as RequestHandler)

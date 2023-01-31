@@ -10,3 +10,5 @@ app.use('/', routes)
 app.listen(port, () => {
   console.log(`Server has started on port ${port}`)
 })
+
+export default app
