@@ -3,7 +3,7 @@
 ### Users
 - [Token Required] `GET /users` -> Get the list of all users
 - [Token Required] `GET /users/:id` -> Get own user
-- [Token Required] `POST /users/?first_name={fn}&last_name={ln}&password={pwd}` -> Create a user
+- `POST /users/?first_name={fn}&last_name={ln}&password={pwd}` -> Create a user
 - [Token Required] `PUT /users/:id?first_name={fn}&last_name={ln}&password={pwd}` -> Update own user information
 - [Token Required] `DELETE /users/:id` -> Delete a user
 - `GET /users/:id/authenticate?password={pwd}` -> Authenticate and get JWT token
