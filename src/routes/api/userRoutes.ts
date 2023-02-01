@@ -24,7 +24,6 @@ userRoutes.get('/', (async (req: Request, res: Response) => {
   }
 }) as RequestHandler)
 
-// Gets own user information
 userRoutes.get('/:id', (async (req: Request, res: Response) => {
   // _ Token Validation Required
   const userID = validateToken(req, res)
@@ -35,10 +34,9 @@ userRoutes.get('/:id', (async (req: Request, res: Response) => {
   }
 
   try {
-    // const id = Number(req.query.id)
-
+    const id = Number(req.params.id)
     const store = new UserTable()
-    const result = await store.show(userID)
+    const result = await store.show(id)
     res.json(result)
   } catch (err) {
     res.status(400)
@@ -48,13 +46,13 @@ userRoutes.get('/:id', (async (req: Request, res: Response) => {
 
 // Create new user -- creates token for jwt authentication
 userRoutes.post('/', (async (req: Request, res: Response): Promise<void> => {
-  // _ Token Validation Required
-  const userID = validateToken(req, res)
-  if (userID === -1) {
-    res.status(401)
-    res.send('Access denied, invalid token.')
-    return
-  }
+  // // Token Validation Required
+  // const userID = validateToken(req, res)
+  // if (userID === -1) {
+  //   res.status(401)
+  //   res.send('Access denied, invalid token.')
+  //   return
+  // }
 
   try {
     const u = {
@@ -90,14 +88,14 @@ userRoutes.put('/:id', (async (req: Request, res: Response): Promise<void> => {
 
   try {
     // can only update his own user
-    // const id = Number(req.query.id)
+    const id = Number(req.params.id)
     const u = {
       first_name: String(req.query.first_name),
       last_name: String(req.query.last_name),
       password: String(req.query.password)
     }
     const store = new UserTable()
-    const newUser = await store.update(userID, u)
+    const newUser = await store.update(id, u)
 
     // sign token to create user
     const token = jwt.sign({ user: newUser }, String(process.env.TOKEN_SECRET))
@@ -123,10 +121,10 @@ userRoutes.delete('/:id', (async (req: Request, res: Response) => {
   }
 
   try {
-    const id = Number(req.query.id)
+    const id = Number(req.params.id)
     const store = new UserTable()
     const u = await store.delete(id)
-    res.send(`Deleted user: ${String(u)}`)
+    res.send(`Deleted user: ${String(u.id)}`)
   } catch (err) {
     res.status(400)
     res.send(String(err))
@@ -136,7 +134,7 @@ userRoutes.delete('/:id', (async (req: Request, res: Response) => {
 // authenticate a user
 userRoutes.get('/:id/authenticate', (async (req: Request, res: Response) => {
   try {
-    const id = Number(req.query.id)
+    const id = Number(req.params.id)
     const password = String(req.query.password)
 
     const store = new UserTable()

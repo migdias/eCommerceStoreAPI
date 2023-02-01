@@ -18,9 +18,6 @@ POSTGRES_TEST_DB=test
 BCRYPT_PASSWORD=speak-friend-and-enter
 SALT_ROUNDS=10
 TOKEN_SECRET=alohomora123!
-TEST_TABLE_USER_ID=1
-TEST_TABLE_USER_PASSWORD=myscariscool123
-TEST_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJmaXJzdF9uYW1lIjoiSGFycnkiLCJsYXN0X25hbWUiOiJQb3R0ZXIiLCJwYXNzd29yZCI6IiQyYiQxMCRvbkRBNVhzUmZhTlcwckU3eXZucVpPdHRQMGg0TUZ5RjhlNU9CMFM5WnBQRFNKaTdLYzFnUyJ9LCJpYXQiOjE2NzUxNTc2NzF9.x364Fme3fmWPe03gAdO5SdC7wGknw1zNQ99pZ2FkBUU
 ````
 
 Start up docker with the .env file. Since it is running locally on your machine. 
@@ -39,9 +36,7 @@ Start up the server by running:
 
 The server will then start running on `http://localhost:3000`
 
-And in order to do pretty much anything you need to get authenticated. You may start by authenticate yourself as 'Harry Potter'. 
-
-Visit: `GET /users/:id/authenticate?id=1&password=myscariscool123`
+Visit: `POST https://localhost:3000/users/?first_name={fn}&last_name={ln}&password={pwd}` to create your own user.
 
 Please save the token and add it to your authorization header. From here you can create your own user, add products, create orders and much more. 
 

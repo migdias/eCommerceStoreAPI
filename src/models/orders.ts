@@ -1,11 +1,24 @@
 import client from '../database'
 
-export interface Order {
+export interface orderProduct {
   id?: number
+  order_id: number
   product_id: number
   quantity: number
+}
+
+export interface Order {
+  id?: number
   user_id: number
   status: 'active' | 'complete'
+}
+
+export interface printOrders {
+  order_id: number
+  product: string
+  price: number
+  category: string
+  quantity: number
 }
 
 export class OrderTable {
@@ -14,15 +27,29 @@ export class OrderTable {
    * @param userID is the user id
    * @returns all the orders current and past of that user
    */
-  async index (userID: number): Promise<Order[]> {
+  async index (): Promise<Order[]> {
     try {
-      const sql = 'SELECT * FROM orders WHERE user_id=($1)'
+      const sql = 'SELECT * FROM orders'
       const conn = await client.connect()
-      const result = await conn.query(sql, [userID])
+      const result = await conn.query(sql)
 
       conn.release()
 
       return result.rows
+    } catch (err) {
+      throw new Error(`Could not add the product to the cart. Error: ${String(err)}`)
+    }
+  }
+
+  async createOrder (userID: number): Promise<Order> {
+    try {
+      const sql = 'INSERT INTO orders (user_id, status) VALUES (($1), ($2)) RETURNING *'
+      const conn = await client.connect()
+      const result = await conn.query(sql, [userID, 'active'])
+
+      conn.release()
+
+      return result.rows[0]
     } catch (err) {
       throw new Error(`Could not add the product to the cart. Error: ${String(err)}`)
     }
@@ -35,11 +62,11 @@ export class OrderTable {
    * @param userID the userid to associate that order
    * @returns the added product object
    */
-  async addProductOrder (quantity: number, productID: number, userID: number): Promise<Order> {
+  async addProductOrder (quantity: number, productID: number, orderID: number): Promise<orderProduct> {
     try {
-      const sql = 'INSERT INTO orders (product_id, quantity, user_id, status) VALUES ($1, $2, $3, $4) RETURNING *'
+      const sql = 'INSERT INTO order_products (product_id, quantity, order_id) VALUES ($1, $2, $3) RETURNING *'
       const conn = await client.connect()
-      const result = await conn.query(sql, [productID, quantity, userID, 'active'])
+      const result = await conn.query(sql, [productID, quantity, orderID])
 
       conn.release()
 
@@ -55,11 +82,11 @@ export class OrderTable {
    * @param orderID the order id to be removed
    * @returns the removed order object
    */
-  async removeProductOrder (userID: number, orderID: number): Promise<Order> {
+  async removeProductOrder (orderID: number, productID: number): Promise<orderProduct> {
     try {
-      const sql = 'DELETE FROM orders WHERE id=($1) AND user_id=($2) RETURNING *'
+      const sql = 'DELETE FROM order_products WHERE order_id=($1) and product_id=($2) RETURNING *'
       const conn = await client.connect()
-      const result = await conn.query(sql, [orderID, userID])
+      const result = await conn.query(sql, [orderID, productID])
       conn.release()
 
       if (typeof result.rows[0] === 'undefined') {
@@ -73,33 +100,15 @@ export class OrderTable {
   }
 
   /**
-   * Empties out the active orders from a specific user
-   * @param userID the user id
-   * @returns the orders that have been deleted
-   */
-  async emptyActiveOrders (userID: number): Promise<Order[]> {
-    try {
-      const sql = 'DELETE FROM orders WHERE user_id=($1) AND status=($2) RETURNING *'
-      const conn = await client.connect()
-      const result = await conn.query(sql, [userID, 'active'])
-      conn.release()
-
-      return result.rows
-    } catch (err) {
-      throw new Error(`Could not empty cart. Error: ${String(err)}`)
-    }
-  }
-
-  /**
    * Buys current active orders (changes status to "complete")
    * @param userID the user id
    * @returns the bought orders
    */
-  async makeBuy (userID: number): Promise<Order[]> {
+  async makeBuy (orderID: number): Promise<Order[]> {
     try {
-      const sql = 'UPDATE orders SET status = ($2) WHERE user_id=($1) AND status=($3) RETURNING *'
+      const sql = 'UPDATE orders SET status = ($2) WHERE id=($1) RETURNING *'
       const conn = await client.connect()
-      const result = await conn.query(sql, [userID, 'complete', 'active'])
+      const result = await conn.query(sql, [orderID, 'complete'])
       conn.release()
 
       return result.rows
@@ -113,10 +122,16 @@ export class OrderTable {
    * @param userID is the if of the user to which we want to get the orders
    * @returns the current order of that user
    */
-  async currentOrder (userID: number): Promise<Order[]> {
+  async currentOrders (userID: number): Promise<printOrders[]> {
     try {
       const conn = await client.connect()
-      const sql = 'SELECT * from orders WHERE user_id=($1) AND status=($2)'
+      const sql = `SELECT orders.id as order_id, 
+                          products.name as product, products.price as price, products.category as category,
+                          order_products.quantity
+                  FROM order_products 
+                  INNER JOIN orders ON order_products.order_id=orders.id
+                  INNER JOIN products ON order_products.product_id=products.id
+                  WHERE orders.status=($2) AND orders.user_id=($1)`
       const result = await conn.query(sql, [userID, 'active'])
       conn.release()
       return result.rows
@@ -130,10 +145,15 @@ export class OrderTable {
    * @param userID is the if of the user to which we want to get the orders
    * @returns the completed orders of that user
    */
-  async completedOrders (userID: number): Promise<Order[]> {
+  async completedOrders (userID: number): Promise<printOrders[]> {
     try {
       const conn = await client.connect()
-      const sql = 'SELECT * from orders WHERE user_id=($1) AND status=($2)'
+      const sql = `SELECT orders.id as order_id, products.name as product, products.price as price, products.category as category,
+                          order_products.quantity
+                  FROM order_products 
+                  INNER JOIN orders ON order_products.order_id=orders.id
+                  INNER JOIN products ON order_products.product_id=products.id
+                  WHERE orders.status=($2) AND orders.user_id=($1)`
       const result = await conn.query(sql, [userID, 'complete'])
       conn.release()
       return result.rows

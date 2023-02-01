@@ -4,105 +4,77 @@ const orderTable = new OrderTable()
 
 describe('Order Model', () => {
   it('Current order of user 1 should return nothing', async () => {
-    const current = await orderTable.currentOrder(1)
-    expect(current).toEqual([])
+    const current = await orderTable.currentOrders(1)
+    expect(current).toEqual([{
+      order_id: 2,
+      product: 'Nimbus 2000',
+      price: 999.99,
+      category: 'Broom',
+      quantity: 1
+    }])
   })
   it('Current order of user 2 should return one active order', async () => {
-    const current = await orderTable.currentOrder(2)
-    expect(current).toEqual([{
-      id: 4,
-      product_id: 7,
-      quantity: 1,
-      user_id: 2,
-      status: 'active'
-    }])
+    const current = await orderTable.currentOrders(2)
+    expect(current.length).toEqual(2)
+    expect(current[0]).toEqual({
+      order_id: 5,
+      product: 'Magical Beans',
+      price: 3.99,
+      category: 'Candy',
+      quantity: 2
+    })
   })
   it('Completed order of user 2 should return 1 complete orders', async () => {
     const completed = await orderTable.completedOrders(2)
-    expect(completed.length).toEqual(1)
-    expect(completed).toEqual([{
-      id: 3,
-      product_id: 2,
-      quantity: 1,
-      user_id: 2,
-      status: 'complete'
-    }])
+    expect(completed.length).toEqual(2)
+    expect(completed).toEqual([
+      {
+        order_id: 3,
+        product: 'Felix Felicis',
+        price: 4999.99,
+        category: 'Potion',
+        quantity: 1
+      },
+      {
+        order_id: 4,
+        product: 'Magical Creatures',
+        price: 29.99,
+        category: 'Book',
+        quantity: 1
+      }
+    ])
   })
   it('buy should remove active orders', async () => {
-    const result = await orderTable.makeBuy(2)
-    expect(result).toEqual([{
-      id: 4,
-      product_id: 7,
-      quantity: 1,
-      user_id: 2,
-      status: 'complete'
-    }])
-
-    const currentOrder = await orderTable.currentOrder(2)
-    expect(currentOrder).toEqual([])
-
-    const completedOrders = await orderTable.completedOrders(2)
-    expect(completedOrders.length).toEqual(2)
-    expect(completedOrders[0]).toEqual({
-      id: 3,
-      product_id: 2,
-      quantity: 1,
-      user_id: 2,
-      status: 'complete'
-    })
-    expect(completedOrders[1]).toEqual({
-      id: 4,
-      product_id: 7,
-      quantity: 1,
-      user_id: 2,
-      status: 'complete'
-    })
+    const result = await orderTable.makeBuy(3)
+    expect(result).toEqual([
+      {
+        id: 3,
+        user_id: 2,
+        status: 'complete'
+      }
+    ])
   })
-  it('Add product to user 1 should add it and make active', async () => {
-    const addedProduct = await orderTable.addProductOrder(4, 3, 1)
+  it('Add product to user 1 should add it', async () => {
+    const addedProduct = await orderTable.addProductOrder(1, 1, 1)
     expect(addedProduct).toEqual({
-      id: 6,
-      product_id: 3,
-      quantity: 4,
-      user_id: 1,
-      status: 'active'
+      id: 9,
+      order_id: 1,
+      product_id: 1,
+      quantity: 1
     })
-    const current = await orderTable.currentOrder(1)
+    const current = await orderTable.currentOrders(1)
     expect(current.length).toEqual(1)
   })
-  it('Add 2 more products to user 1 should make it three current orders', async () => {
-    const addedProduct = await orderTable.addProductOrder(1, 4, 1)
-    await orderTable.addProductOrder(1, 1, 1)
 
-    expect(addedProduct).toEqual({
-      id: 7,
-      product_id: 4,
-      quantity: 1,
-      user_id: 1,
-      status: 'active'
-    })
-    const current = await orderTable.currentOrder(1)
-    expect(current.length).toEqual(3)
-  })
-
-  it('Remove one product should make current order = 2', async () => {
-    const removedProduct = await orderTable.removeProductOrder(1, 7)
+  it('Remove one product', async () => {
+    const removedProduct = await orderTable.removeProductOrder(5, 2)
     expect(removedProduct).toEqual({
       id: 7,
-      product_id: 4,
-      quantity: 1,
-      user_id: 1,
-      status: 'active'
+      order_id: 5,
+      product_id: 2,
+      quantity: 1
     })
-    const current = await orderTable.currentOrder(1)
-    expect(current.length).toEqual(2)
-  })
-
-  it('Empty active orders should return the two active order for user 1 and delete them', async () => {
-    const emptied = await orderTable.emptyActiveOrders(1)
-    expect(emptied.length).toEqual(2)
-
-    const completed = await orderTable.completedOrders(1)
-    expect(completed.length).toEqual(2)
+    const current = await orderTable.currentOrders(1)
+    expect(current.length).toEqual(1)
   })
 })

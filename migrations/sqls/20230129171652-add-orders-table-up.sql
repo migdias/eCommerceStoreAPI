@@ -1,15 +1,14 @@
 CREATE TABLE IF NOT EXISTS orders (
     id SERIAL PRIMARY KEY,
-    product_id INTEGER REFERENCES products(id),
-    quantity INTEGER,
-    user_id INTEGER REFERENCES users(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     status VARCHAR(15)
 );
 
-INSERT INTO orders (product_id, quantity, user_id, status)
+INSERT INTO orders (user_id, status)
 VALUES
-    (5, 1, 1, 'complete'),
-    (3, 2, 1, 'complete'),
-    (2, 1, 2, 'complete'),
-    (7, 1, 2, 'active'),
-    (6, 1, 3, 'complete');
+    (1, 'complete'),
+    (1, 'active'),
+    (2, 'complete'),
+    (2, 'complete'),
+    (2, 'active'),
+    (3, 'complete');

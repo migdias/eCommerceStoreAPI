@@ -19,7 +19,7 @@ productRoutes.get('/', (async (req: Request, res: Response) => {
 // Get one single product
 productRoutes.get('/:id', (async (req: Request, res: Response) => {
   try {
-    const id = Number(req.query.id)
+    const id = Number(req.params.id)
     const store = new ProductStore()
     const result = await store.show(id)
     res.json(result)
@@ -66,7 +66,7 @@ productRoutes.put('/:id', (async (req: Request, res: Response): Promise<void> =>
     return
   }
   try {
-    const id = Number(req.query.id)
+    const id = Number(req.params.id)
     const p = {
       name: String(req.query.name),
       price: Number(req.query.price),
@@ -91,7 +91,7 @@ productRoutes.delete('/:id', (async (req: Request, res: Response) => {
   }
 
   try {
-    const id = Number(req.query.id)
+    const id = Number(req.params.id)
     const store = new ProductStore()
     await store.delete(id)
     res.send(`Deleted product with id: ${id}`)

@@ -5,22 +5,22 @@
 - [Token Required] `GET /users/:id` -> Get own user
 - [Token Required] `POST /users/?first_name={fn}&last_name={ln}&password={pwd}` -> Create a user
 - [Token Required] `PUT /users/:id?first_name={fn}&last_name={ln}&password={pwd}` -> Update own user information
-- [Token Required] `DELETE /users/:id?id={id}` -> Delete a user
-- `GET /users/:id/authenticate?id={user_id}&password={pwd}` -> Authenticate and get JWT token
+- [Token Required] `DELETE /users/:id` -> Delete a user
+- `GET /users/:id/authenticate?password={pwd}` -> Authenticate and get JWT token
 
 ### Products
 - `GET /products` -> Gets all existing products
-- `GET /products/:id?id={id}` -> Get one specific product by id
+- `GET /products/:id` -> Get one specific product by id
 - [Token Required] `POST /products?name={name}&price={price}&category={category}` -> Creates a product
-- [Token Required] `PUT /products/:id?id={id}&name={name}&price={price}&category={category}` -> Updates product information (needs all columns except id)
-- [Token Required] `DELETE /products/:id?id={id}` -> Deletes a product from the database
+- [Token Required] `PUT /products/:id/?name={name}&price={price}&category={category}` -> Updates product information (needs all columns except id)
+- [Token Required] `DELETE /products/:id` -> Deletes a product from the database
 
 ### Orders
 - [Token Required] `GET /orders/` -> Gets all orders related to your user (active and complete)
-- [Token Required] `GET /orders/currentOrders` -> Gets the current active orders for your user
-- [Token Required] `GET /orders/completedOrders` -> Gets the completed orders for your user
-- [Token Required] `POST /orders/product/?product_id={id}&quantity={quantity}` -> Creates an order of the `product_id` with the `quantity` (Associated with your user)
-- [Token Required] `DELETE /orders/:id?id=1` -> Deletes an order with a specific id (only if your user created that order)
+- [Token Required] `GET /orders/currentOrders?user_id={user_id}` -> Gets the current active orders for your user
+- [Token Required] `GET /orders/completedOrders?user_id={user_id}` -> Gets the completed orders for your user
+- [Token Required] `POST /orders/:id/product/?product_id={id}&quantity={quantity}` -> Creates an order of the `product_id` with the `quantity` (Associated with your user)
+- [Token Required] `DELETE /orders/:id/product/?product_id={id}` -> Deletes an order with a specific id (only if your user created that order)
 
 ## Database and Tables
 
@@ -40,9 +40,13 @@ Tables:
     - **price** -> FLOAT NOT NULL,
     - **category** -> VARCHAR(50)
 
-- orders
+- order
     - **id** -> SERIAL PRIMARY KEY,
-    - **product_id** -> INTEGER REFERENCES products(id),
-    - **quantity** -> INTEGER,
-    - **user_id** -> INTEGER REFERENCES users(id),
+    - **user_id** -> REFERENCES users(id) ON DELETE CASCADE,
     - **status** -> VARCHAR(15)
+
+- order_products
+    - **id** -> SERIAL PRIMARY KEY,
+    - **quantity** -> INTEGER,
+    - **order_id** -> INTEGER REFERENCES orders(id) ON CASCADE DELETE,
+    - **product_id** -> INTEGER REFERENCES products(id) ON CASCADE DELETE,
