@@ -4,7 +4,7 @@
 - [Token Required] `GET /users` -> Get the list of all users
 - [Token Required] `GET /users/:id` -> Get own user
 - `POST /users/?first_name={fn}&last_name={ln}&password={pwd}` -> Create a user
-- [Token Required] `PUT /users/:id?first_name={fn}&last_name={ln}&password={pwd}` -> Update own user information
+- [Token Required] `PUT /users/:id?first_name={fn}&last_name={ln}&password={pwd}` -> Update user information
 - [Token Required] `DELETE /users/:id` -> Delete a user
 - `GET /users/:id/authenticate?password={pwd}` -> Authenticate and get JWT token
 
@@ -16,11 +16,11 @@
 - [Token Required] `DELETE /products/:id` -> Deletes a product from the database
 
 ### Orders
-- [Token Required] `GET /orders/` -> Gets all orders related to your user (active and complete)
-- [Token Required] `GET /orders/currentOrders?user_id={user_id}` -> Gets the current active orders for your user
-- [Token Required] `GET /orders/completedOrders?user_id={user_id}` -> Gets the completed orders for your user
-- [Token Required] `POST /orders/:id/product/?product_id={id}&quantity={quantity}` -> Creates an order of the `product_id` with the `quantity` (Associated with your user)
-- [Token Required] `DELETE /orders/:id/product/?product_id={id}` -> Deletes an order with a specific id (only if your user created that order)
+- [Token Required] `GET /orders/` -> Gets all orders (active and complete)
+- [Token Required] `GET /orders/currentOrders?user_id={user_id}` -> Gets the current active orders for a specific user
+- [Token Required] `GET /orders/completedOrders?user_id={user_id}` -> Gets the completed orders for a specific user
+- [Token Required] `POST /orders/:id/product/?product_id={id}&quantity={quantity}` -> Adds a product to an existing order of the `product_id` with the `quantity` 
+- [Token Required] `DELETE /orders/:id/product/?product_id={id}` -> Removes a product from an order
 
 ## Database and Tables
 

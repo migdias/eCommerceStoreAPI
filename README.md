@@ -36,6 +36,9 @@ Start up the server by running:
 
 The server will then start running on `http://localhost:3000`
 
+ServerPort = `3000`
+DatabasePort = `5432`
+
 Visit: `POST https://localhost:3000/users/?first_name={fn}&last_name={ln}&password={pwd}` to create your own user.
 
 Please save the token and add it to your authorization header. From here you can create your own user, add products, create orders and much more. 
